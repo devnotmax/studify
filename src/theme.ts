@@ -9,7 +9,7 @@ const lightTheme = {
     lavender: "#EDECE8",
     lightBorder: "#bcb7cc",
     white: "#ffffff",
-    lightGray: "#e8e8e3",
+    lightGray: "#D9D9D9",
     periwinkle: "#aeb7d6",
     mossGreen: "#8aa18e",
     mustard: "#D3B87F",
@@ -19,8 +19,9 @@ const lightTheme = {
     burgundy: "#8b5a5a",
     iceBlue: "#c9d5dc",
     teal: "#55686c",
-    background: "#f4f1f6",
+    background: "#F8F7FA",
     text: "#565656",
+    secondaryText: "#979797",
   },
 };
 

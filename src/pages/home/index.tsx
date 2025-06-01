@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
+import ConfigModal from "../../components/modals/ConfigModal/ConfigModal";
 
 const Home: React.FC = () => {
+  const [showModal, setShowModal] = useState(false);
+
   return (
-    <div>
-      <h1>Welcome to the Home Page</h1>
-      <p>This is the content of the Home page.</p>
-    </div>
+    <>
+      <button onClick={() => setShowModal(true)}>Abrir Configuración</button>
+      <h1>Bienvenido a la Página de Inicio</h1>
+      <ConfigModal isOpen={showModal} onClose={() => setShowModal(false)} width="60%"/>
+    </>
   );
 };
 
