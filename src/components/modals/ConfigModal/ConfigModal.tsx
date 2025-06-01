@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import BaseModal from "../BaseModal/BaseModal";
 import ConfigMenu from "./ConfigMenu";
+import TimerConfig from "./TimerConfig";
 
 interface ConfigModalProps {
   isOpen: boolean;
@@ -17,10 +18,22 @@ const ConfigModal: React.FC<ConfigModalProps> = ({
 }) => {
   const [selectedTab, setSelectedTab] = useState<Tab>("timer");
 
+  const handleTimerSave = (settings: any) => {
+    console.log("Timer settings saved:", settings);
+    // Aquí puedes manejar el guardado de configuraciones
+  };
+
+  const handleTimerReset = () => {
+    console.log("Timer settings reset to default");
+    // Aquí puedes manejar el reset de configuraciones
+  };
+
   const renderTabContent = () => {
     switch (selectedTab) {
       case "timer":
-        return <div>Timer settings content here</div>;
+        return (
+          <TimerConfig onSave={handleTimerSave} onReset={handleTimerReset} />
+        );
       case "sound":
         return <div>Sound settings content here</div>;
       case "appearance":
