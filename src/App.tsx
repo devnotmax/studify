@@ -1,13 +1,23 @@
-// src/App.tsx
 import { Route, Routes } from "react-router-dom";
+import StudifySidebar from "./components/sideBar/SideBar";
+import { TimerProvider } from "./context/TimerContext";
 import Home from "./pages/home";
 import "./App.css";
+import StudifyEndSidebar from "./components/RigthSideBar/RigthSidebar";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-    </Routes>
+    <TimerProvider>
+      <div className="flex">
+        <StudifySidebar />
+        <div className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </div>
+        <StudifyEndSidebar />
+      </div>
+    </TimerProvider>
   );
 }
 

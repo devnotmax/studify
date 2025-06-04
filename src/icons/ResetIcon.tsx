@@ -1,25 +1,18 @@
 import type { SVGProps } from "react";
 
-export function ResetIcon(props: SVGProps<SVGSVGElement>) {
+export default function ResetIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={21}
-      height={21}
-      viewBox="0 0 21 21"
+      width={24}
+      height={24}
+      viewBox="0 0 24 24"
       {...props}
     >
-      <g
-        fill={props.color || "currentColor"}
-        fillRule="evenodd"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1}
-      >
-        <path d="M3.578 6.487A8 8 0 1 1 2.5 10.5"></path>
-        <path d="M7.5 6.5h-4v-4"></path>
-      </g>
+      <path
+        fill="currentColor"
+        d="M7.207 2.543a1 1 0 0 1 0 1.414L5.414 5.75h7.836a8 8 0 1 1-8 8a1 1 0 1 1 2 0a6 6 0 1 0 6-6H5.414l1.793 1.793a1 1 0 0 1-1.414 1.414l-3.5-3.5a1 1 0 0 1 0-1.414l3.5-3.5a1 1 0 0 1 1.414 0"
+      ></path>
     </svg>
   );
 }
