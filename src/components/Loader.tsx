@@ -3,7 +3,7 @@ import { gsap } from "gsap";
 import logo from "../assets/logo.mp4";
 import logo2 from "../assets/logo.svg";
 
-const LOADING_TIME = 1000;
+const LOADING_TIME = 8000;
 
 const Loader: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
   const [progress, setProgress] = useState(0);
