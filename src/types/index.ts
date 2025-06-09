@@ -8,3 +8,12 @@ export interface SideBarItemProps {
   selected?: boolean;
   onSelect?: () => void;
 }
+
+type SessionType = "focus session" | "short break" | "long break";
+
+export interface SessionItemProps {
+  type: SessionType;
+  duration: string;
+  date: string;
+  decorator: FC<SVGProps<SVGSVGElement>>;
+}

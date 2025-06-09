@@ -26,23 +26,23 @@ export const SideBarItem = ({
   }, [selected]);
 
   return (
-    <div className="flex items-center h-16">
+    <div className="flex items-center h-12">
       <div
         ref={itemRef}
-        className={`flex items-center w-full m-2 rounded-lg cursor-pointer transition-colors duration-200 ${
+        className={`flex items-center w-full m-1.5 rounded-lg cursor-pointer transition-colors duration-200 ${
           selected ? "bg-peach" : "hover:bg-peach/20"
         }`}
         onClick={onSelect}
       >
-        <div className="flex items-center h-12 pl-6">
+        <div className="flex items-center h-10 pl-4">
           <Decorator
-            className="w-7 h-7"
+            className="w-5 h-5"
             fill={selected ? "#2B4E52" : "#6B7280"}
           />
         </div>
-        <div className="flex items-center h-12 pl-6">
+        <div className="flex items-center h-10 pl-4">
           <p
-            className={`font-light text-xl ${
+            className={`font-light text-base ${
               selected ? "text-text" : "text-gray-500"
             }`}
           >

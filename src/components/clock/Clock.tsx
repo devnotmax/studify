@@ -4,6 +4,8 @@ import { PauseIcon } from "../../icons/PauseIcon";
 import { PlayIcon } from "../../icons/PlayIcon";
 import ResetIcon from "../../icons/ResetIcon";
 import { Tooltip } from "../ui/Tooltip";
+import { toast } from "react-toastify";
+import notification from "/notification.mp3";
 
 export const Clock = () => {
   const { timeLeft, setTimeLeft, isRunning, setIsRunning, mode } = useTimer();
@@ -31,10 +33,34 @@ export const Clock = () => {
       (mode === "focus" ? 1500 : mode === "short-break" ? 300 : 900)) *
     100;
 
+  useEffect(() => {
+    if (timeLeft === 0) {
+      notifyEndTimer();
+    }
+  }, [timeLeft]);
+
   const formatTime = (num: number) => num.toString().padStart(2, "0");
 
   const circumference = 2 * Math.PI * 120;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+  const notifyEndTimer = () => {
+    if (mode === "focus") {
+      toast.success("your focus time is over, now take a break");
+      setTimeLeft(1500); // 25 minutos para focus
+      setIsRunning(false); // Focus queda pausado
+    } else if (mode === "short-break") {
+      toast.success("short break ended, now is time to work!");
+      setTimeLeft(300); // 5 minutos para short break
+      setIsRunning(true); // Break se reinicia automáticamente
+    } else if (mode === "long-break") {
+      toast.success("long break, work smarter not harder");
+      setTimeLeft(900); // 15 minutos para long break
+      setIsRunning(true); // Break se reinicia automáticamente
+    }
+    const audio = new Audio(notification);
+    audio.play();
+  };
 
   return (
     <div className="flex flex-col items-center justify-center gap-8">
@@ -64,11 +90,15 @@ export const Clock = () => {
           <div className="text-5xl font-light text-text">
             {formatTime(minutes)}:{formatTime(seconds)}
           </div>
-          <div className="text-xl text-secondaryText font-light mt-2">minutes</div>
+          <div className="text-xl text-secondaryText font-light mt-2">
+            {minutes > 0 ? "minutes" : "seconds"}
+          </div>
         </div>
       </div>
       <div className="flex gap-4">
-        <Tooltip label={isRunning ? "Pausar temporizador" : "Iniciar temporizador"}>
+        <Tooltip
+          label={isRunning ? "pausar temporizador" : "iniciar temporizador"}
+        >
           <button
             onClick={() => setIsRunning(!isRunning)}
             className="w-12 h-12 rounded-full bg-peach flex items-center justify-center hover:bg-peach/80 transition-colors"
@@ -76,7 +106,7 @@ export const Clock = () => {
             {isRunning ? <PauseIcon /> : <PlayIcon />}
           </button>
         </Tooltip>
-        <Tooltip label="Reiniciar temporizador">
+        <Tooltip label="reiniciar temporizador">
           <button
             onClick={() => {
               setIsRunning(false);

@@ -15,7 +15,7 @@ interface TimerContextType {
 const TimerContext = createContext<TimerContextType | undefined>(undefined);
 
 const TIMER_DURATIONS = {
-  focus: 25 * 60,
+  focus: 0.1 * 60,
   "short-break": 5 * 60,
   "long-break": 15 * 60,
 };

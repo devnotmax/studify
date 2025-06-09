@@ -18,9 +18,9 @@ const StudifySidebar = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-72 bg-white shadow-md flex flex-col">
+      <div className="w-52 bg-white shadow-md flex flex-col">
         <SideBarLogo />
-        <main className="mt-10">
+        <main className="mt-6">
           <section>
             <SideBarTitle title="timer" />
             <div className="flex flex-col">

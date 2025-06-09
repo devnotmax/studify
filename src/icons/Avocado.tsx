@@ -11,7 +11,7 @@ export function Avocado(props: SVGProps<SVGSVGElement>) {
     >
       <g
         fill="none"
-        stroke="currentColor"
+        stroke={props.fill || "currentColor"}
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}

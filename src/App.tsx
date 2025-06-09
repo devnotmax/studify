@@ -4,6 +4,7 @@ import { TimerProvider } from "./context/TimerContext";
 import Home from "./pages/home";
 import "./App.css";
 import StudifyEndSidebar from "./components/RigthSideBar/RigthSidebar";
+import { Toast } from "./components/ui/Toast";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           </Routes>
         </div>
         <StudifyEndSidebar />
+        <Toast />
       </div>
     </TimerProvider>
   );
