@@ -51,12 +51,13 @@ export const Tooltip = ({
   const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
 
   // Estilos para la flecha
+  const placementSide = placement.split("-")[0] || "top";
   const staticSide = {
     top: "bottom",
     right: "left",
     bottom: "top",
     left: "right",
-  }[placement.split("-")[0]];
+  }[placementSide];
 
   const arrowStyle = {
     left: middlewareData.arrow?.x ?? undefined,

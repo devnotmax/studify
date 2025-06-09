@@ -4,9 +4,11 @@ import type { FC } from "react";
 
 export interface SideBarItemProps {
   decorator: FC<SVGProps<SVGSVGElement>>;
-  title: string;
+  title?: string;
   selected?: boolean;
   onSelect?: () => void;
+  className?: string;
+  decoratorClassName?: string;
 }
 
 type SessionType = "focus session" | "short break" | "long break";

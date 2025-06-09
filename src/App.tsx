@@ -1,24 +1,22 @@
-import { Route, Routes } from "react-router-dom";
-import StudifySidebar from "./components/sideBar/SideBar";
+import { useState } from "react";
 import { TimerProvider } from "./context/TimerContext";
-import Home from "./pages/home";
 import "./App.css";
-import StudifyEndSidebar from "./components/RigthSideBar/RigthSidebar";
-import { Toast } from "./components/ui/Toast";
+import Loader from "./components/Loader";
+import useWindowSize from "./hooks/useWindowSize";
+import MobileLayout from "./layouts/MobileLayout";
+import DesktopLayout from "./layouts/DesktopLayout";
 
 function App() {
+  const [loading, setLoading] = useState(true);
+  const { isMobile } = useWindowSize();
+
+  if (loading) {
+    return <Loader onFinish={() => setLoading(false)} />;
+  }
+
   return (
     <TimerProvider>
-      <div className="flex">
-        <StudifySidebar />
-        <div className="flex-1">
-          <Routes>
-            <Route path="/" element={<Home />} />
-          </Routes>
-        </div>
-        <StudifyEndSidebar />
-        <Toast />
-      </div>
+      {isMobile ? <MobileLayout /> : <DesktopLayout />}
     </TimerProvider>
   );
 }

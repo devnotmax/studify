@@ -18,8 +18,8 @@ const ConfigModal: React.FC<ConfigModalProps> = ({
 }) => {
   const [selectedTab, setSelectedTab] = useState<Tab>("timer");
 
-  const handleTimerSave = (settings: any) => {
-    console.log("Timer settings saved:", settings);
+  const handleTimerSave = () => {
+    console.log("Timer settings saved");
     // Aquí puedes manejar el guardado de configuraciones
   };
 

@@ -4,6 +4,8 @@ import type { SideBarItemProps } from "../../types";
 
 export const SideBarItem = ({
   decorator: Decorator,
+  decoratorClassName,
+  className,
   title,
   selected = false,
   onSelect,
@@ -29,14 +31,14 @@ export const SideBarItem = ({
     <div className="flex items-center h-12">
       <div
         ref={itemRef}
-        className={`flex items-center w-full m-1.5 rounded-lg cursor-pointer transition-colors duration-200 ${
+        className={`flex items-center w-full m-1.5 rounded-lg cursor-pointer transition-colors duration-200 ${className} ${
           selected ? "bg-peach" : "hover:bg-peach/20"
         }`}
         onClick={onSelect}
       >
         <div className="flex items-center h-10 pl-4">
           <Decorator
-            className="w-5 h-5"
+            className={`w-5 h-5 ${decoratorClassName}`}
             fill={selected ? "#2B4E52" : "#6B7280"}
           />
         </div>

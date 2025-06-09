@@ -1,20 +1,29 @@
 import { PlayingTitle } from "./PlayingTitle";
-import { YoutubeVideo } from "./YoutubeVideo";
 import { RecentSessions } from "./RecentSessions";
+import { YoutubeVideo } from "./YoutubeVideo";
 
-const StudifyEndSidebar = () => {
+type Props = {
+  onClose?: () => void;
+  className?: string;
+};
+
+const StudifyEndSidebar = ({ onClose, className = "" }: Props) => {
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-80 bg-white shadow-md flex flex-col">
-        <main className="mt-6">
-          <div className="flex flex-col">
-            <PlayingTitle />
-            <YoutubeVideo />
-            <RecentSessions />
-          </div>
-        </main>
-      </div>
+    <div
+      className={`w-80 max-w-full bg-white shadow-md p-4 overflow-y-auto h-screen ${className}`}
+    >
+      {/* Botón de cerrar solo en mobile */}
+      {onClose && (
+        <button
+          className="block lg:hidden ml-auto mb-4 text-2xl font-bold text-gray-500 hover:text-gray-800"
+          onClick={onClose}
+        >
+          ×
+        </button>
+      )}
+      <PlayingTitle />
+      <YoutubeVideo />
+      <RecentSessions />
     </div>
   );
 };

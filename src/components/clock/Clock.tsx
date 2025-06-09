@@ -1,14 +1,33 @@
 import { useEffect } from "react";
-import { useTimer } from "../../context/TimerContext";
 import { PauseIcon } from "../../icons/PauseIcon";
 import { PlayIcon } from "../../icons/PlayIcon";
 import ResetIcon from "../../icons/ResetIcon";
 import { Tooltip } from "../ui/Tooltip";
 import { toast } from "react-toastify";
 import notification from "/notification.mp3";
+import { useTimer } from "../../context/TimerContext";
 
 export const Clock = () => {
-  const { timeLeft, setTimeLeft, isRunning, setIsRunning, mode } = useTimer();
+  const {
+    timeLeft,
+    setTimeLeft,
+    isRunning,
+    setIsRunning,
+    mode,
+    setMode,
+    settings,
+    currentSequenceIndex,
+    setCurrentSequenceIndex,
+    studyTechniques,
+  } = useTimer();
+
+  const currentTechnique = studyTechniques.find(
+    (t) => t.id === settings.selectedTechnique
+  );
+
+  const focusTime = settings.focus * 60;
+  const shortBreakTime = settings.shortBreak * 60;
+  const longBreakTime = settings.longBreak * 60;
 
   useEffect(() => {
     let intervalId: number;
@@ -30,36 +49,64 @@ export const Clock = () => {
   const seconds = timeLeft % 60;
   const progress =
     (timeLeft /
-      (mode === "focus" ? 1500 : mode === "short-break" ? 300 : 900)) *
+      (mode === "focus"
+        ? focusTime
+        : mode === "short-break"
+        ? shortBreakTime
+        : longBreakTime)) *
     100;
 
   useEffect(() => {
-    if (timeLeft === 0) {
-      notifyEndTimer();
+    if (timeLeft === 0 && currentTechnique) {
+      const nextIndex = (currentSequenceIndex + 1) % currentTechnique.sequence.length;
+      const nextMode = currentTechnique.sequence[nextIndex] || "focus";
+      
+      setCurrentSequenceIndex(nextIndex);
+      setMode(nextMode);
+      
+      const nextDuration = nextMode === "focus"
+        ? focusTime
+        : nextMode === "short-break"
+        ? shortBreakTime
+        : longBreakTime;
+      
+      setTimeLeft(nextDuration);
+      
+      if (settings.autoStart) {
+        setIsRunning(true);
+      }
+
+      // Notificaciones según el modo
+      if (mode === "focus") {
+        toast.success("¡Tiempo de focus terminado! Toma un descanso.");
+      } else if (mode === "short-break") {
+        toast.success("¡Descanso corto terminado! Volvamos a trabajar.");
+      } else if (mode === "long-break") {
+        toast.success("¡Descanso largo terminado! Prepárate para una nueva sesión.");
+      }
+
+      const audio = new Audio(notification);
+      audio.play();
     }
-  }, [timeLeft]);
+  }, [timeLeft, currentTechnique, currentSequenceIndex, settings.autoStart]);
 
   const formatTime = (num: number) => num.toString().padStart(2, "0");
 
   const circumference = 2 * Math.PI * 120;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
-  const notifyEndTimer = () => {
-    if (mode === "focus") {
-      toast.success("your focus time is over, now take a break");
-      setTimeLeft(1500); // 25 minutos para focus
-      setIsRunning(false); // Focus queda pausado
-    } else if (mode === "short-break") {
-      toast.success("short break ended, now is time to work!");
-      setTimeLeft(300); // 5 minutos para short break
-      setIsRunning(true); // Break se reinicia automáticamente
-    } else if (mode === "long-break") {
-      toast.success("long break, work smarter not harder");
-      setTimeLeft(900); // 15 minutos para long break
-      setIsRunning(true); // Break se reinicia automáticamente
-    }
-    const audio = new Audio(notification);
-    audio.play();
+  const handleReset = () => {
+    setIsRunning(false);
+    setCurrentSequenceIndex(0);
+    const initialMode = currentTechnique?.sequence[0] || "focus";
+    setMode(initialMode);
+    setTimeLeft(
+      initialMode === "focus"
+        ? focusTime
+        : initialMode === "short-break"
+        ? shortBreakTime
+        : longBreakTime
+    );
   };
 
   return (
@@ -108,12 +155,7 @@ export const Clock = () => {
         </Tooltip>
         <Tooltip label="reiniciar temporizador">
           <button
-            onClick={() => {
-              setIsRunning(false);
-              setTimeLeft(
-                mode === "focus" ? 1500 : mode === "short-break" ? 300 : 900
-              );
-            }}
+            onClick={handleReset}
             className="w-12 h-12 rounded-full bg-peach flex items-center justify-center hover:bg-peach/80 transition-colors"
           >
             <ResetIcon fill="#2B4E52" />
