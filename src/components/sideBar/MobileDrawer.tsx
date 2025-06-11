@@ -110,7 +110,7 @@ const MobileDrawer = ({ isOpen, onClose }: MobileDrawerProps) => {
                     duration="25:00"
                     date="2025-06-09"
                     decorator={item.icon}
-                    className="w-full"
+                    className="w-full px-4"
                   />
                 </motion.button>
               ))}
