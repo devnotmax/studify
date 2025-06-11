@@ -6,7 +6,7 @@ import { Toast } from "../components/ui/Toast";
 
 const DesktopLayout = () => {
   return (
-    <div className="flex flex-row min-h-screen">
+    <div className="flex flex-row h-screen">
       <StudifySidebar />
       <div className="flex-1 w-full">
         <Routes>
@@ -19,4 +19,4 @@ const DesktopLayout = () => {
   );
 };
 
-export default DesktopLayout; 
+export default DesktopLayout;

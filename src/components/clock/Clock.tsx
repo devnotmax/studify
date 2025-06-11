@@ -6,8 +6,10 @@ import { Tooltip } from "../ui/Tooltip";
 import { toast } from "react-toastify";
 import notification from "/notification.mp3";
 import { useTimer } from "../../context/TimerContext";
+import useWindowSize from "../../hooks/useWindowSize";
 
 export const Clock = () => {
+  const { width } = useWindowSize();
   const {
     timeLeft,
     setTimeLeft,
@@ -20,6 +22,13 @@ export const Clock = () => {
     setCurrentSequenceIndex,
     studyTechniques,
   } = useTimer();
+
+  // Tamaño dinámico del reloj SOLO para PC, en móvil queda como antes
+  const isMobile = width < 768;
+  const clockSize = isMobile ? 256 : Math.max(100, Math.min(width * 0.15, 220));
+  const radius = clockSize / 2 - 12; // 12 es el strokeWidth
+  const center = clockSize / 2;
+  const circumference = 2 * Math.PI * radius;
 
   const currentTechnique = studyTechniques.find(
     (t) => t.id === settings.selectedTechnique
@@ -92,7 +101,6 @@ export const Clock = () => {
 
   const formatTime = (num: number) => num.toString().padStart(2, "0");
 
-  const circumference = 2 * Math.PI * 120;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   const handleReset = () => {
@@ -109,22 +117,34 @@ export const Clock = () => {
     );
   };
 
+  // Tamaños proporcionales
+  const timeTextSize = Math.round(clockSize / 5.5); // Ej: 5xl en 256px
+  const labelTextSize = Math.round(clockSize / 13); // Ej: xl en 256px
+  const buttonSize = Math.round(clockSize / 5.5); // Ej: 48px en 256px
+
   return (
-    <div className="flex flex-col items-center justify-center gap-8">
-      <div className="relative w-64 h-64">
-        <svg className="w-full h-full transform -rotate-90">
+    <div className="flex flex-col items-center justify-center gap-8 mb-6 mt-6">
+      <div
+        className="relative flex items-center justify-center"
+        style={{ width: clockSize, height: clockSize }}
+      >
+        <svg
+          width={clockSize}
+          height={clockSize}
+          className="block"
+        >
           <circle
-            cx="128"
-            cy="128"
-            r="120"
+            cx={center}
+            cy={center}
+            r={radius}
             stroke="#E8E8E8"
             strokeWidth="12"
             fill="none"
           />
           <circle
-            cx="128"
-            cy="128"
-            r="120"
+            cx={center}
+            cy={center}
+            r={radius}
             stroke="#D6E5C6"
             strokeWidth="12"
             fill="none"
@@ -133,11 +153,21 @@ export const Clock = () => {
             className="transition-all duration-1000 ease-linear"
           />
         </svg>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-          <div className="text-5xl font-light text-text">
+        <div
+          className="absolute top-1/2 left-1/2 text-center"
+          style={{
+            transform: "translate(-50%, -50%)",
+            width: clockSize * 0.8,
+          }}
+        >
+          <div
+            style={{ fontSize: timeTextSize, lineHeight: 1, fontWeight: 300, color: "#2B4E52" }}
+          >
             {formatTime(minutes)}:{formatTime(seconds)}
           </div>
-          <div className="text-xl text-secondaryText font-light mt-2">
+          <div
+            style={{ fontSize: labelTextSize, color: "#7A8C8E", fontWeight: 300, marginTop: 8 }}
+          >
             {minutes > 0 ? "minutes" : "seconds"}
           </div>
         </div>
@@ -148,7 +178,8 @@ export const Clock = () => {
         >
           <button
             onClick={() => setIsRunning(!isRunning)}
-            className="w-12 h-12 rounded-full bg-peach flex items-center justify-center hover:bg-peach/80 transition-colors"
+            style={{ width: buttonSize, height: buttonSize }}
+            className="rounded-full bg-peach flex items-center justify-center hover:bg-peach/80 transition-colors"
           >
             {isRunning ? <PauseIcon /> : <PlayIcon />}
           </button>
@@ -156,7 +187,8 @@ export const Clock = () => {
         <Tooltip label="reiniciar temporizador">
           <button
             onClick={handleReset}
-            className="w-12 h-12 rounded-full bg-peach flex items-center justify-center hover:bg-peach/80 transition-colors"
+            style={{ width: buttonSize, height: buttonSize }}
+            className="rounded-full bg-peach flex items-center justify-center hover:bg-peach/80 transition-colors"
           >
             <ResetIcon fill="#2B4E52" />
           </button>

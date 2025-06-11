@@ -21,9 +21,9 @@ export const HomeTitle = () => {
   const currentMode = titles[mode];
 
   return (
-    <div className="w-full py-14 flex flex-col items-center justify-center">
-      <h1 className="text-4xl font-light mb-4">{currentMode.title}</h1>
-      <p className="text-xl font-extralight tracking-wider text-gray-500">
+    <div className="w-full py-3 flex flex-col items-center justify-center">
+      <h1 className="text-2xl font-light">{currentMode.title}</h1>
+      <p className="text-lg font-extralight tracking-wider text-gray-500">
         {currentMode.subtitle}
       </p>
     </div>

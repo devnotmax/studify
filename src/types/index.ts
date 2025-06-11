@@ -18,4 +18,5 @@ export interface SessionItemProps {
   duration: string;
   date: string;
   decorator: FC<SVGProps<SVGSVGElement>>;
+  className?: string;
 }

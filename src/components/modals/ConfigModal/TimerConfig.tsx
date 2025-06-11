@@ -22,7 +22,7 @@ const TimerConfig: React.FC<TimerConfigProps> = ({ onSave, onReset }) => {
     const numValue = parseInt(value) || 0;
     setLocalSettings((prev) => ({
       ...prev,
-      [field]: Math.max(1, Math.min(999, numValue)), // Limitar entre 1 y 999
+      [field]: value === "" ? "" : Math.max(1, Math.min(999, numValue)),
     }));
   };
 
@@ -47,6 +47,10 @@ const TimerConfig: React.FC<TimerConfigProps> = ({ onSave, onReset }) => {
   };
 
   const handleSave = () => {
+    if (!localSettings.focus || !localSettings.shortBreak || !localSettings.longBreak) {
+      toast.error("Please fill in all duration fields");
+      return;
+    }
     updateSettings(localSettings);
     onSave?.();
     toast.success("Settings saved");
