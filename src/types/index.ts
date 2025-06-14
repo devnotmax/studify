@@ -11,12 +11,20 @@ export interface SideBarItemProps {
   decoratorClassName?: string;
 }
 
-type SessionType = "focus session" | "short break" | "long break";
+type SessionType = "focus" | "short-break" | "long-break";
 
 export interface SessionItemProps {
-  type: SessionType;
+  type: string;
   duration: string;
   date: string;
   decorator: FC<SVGProps<SVGSVGElement>>;
   className?: string;
+}
+
+export interface PomodoroSession {
+  id: string;
+  type: SessionType;
+  date: string;
+  time: string;
+  duration: number;
 }

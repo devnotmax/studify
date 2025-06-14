@@ -3,7 +3,6 @@ import { XIcon } from "../../icons/XIcon";
 import { BrainIcon } from "../../icons/BrainIcon";
 import { CoffeeIcon } from "../../icons/CoffeeIcon";
 import { Avocado } from "../../icons/Avocado";
-import { useTimer } from "../../context/TimerContext";
 import { useState } from "react";
 import ConfigModal from "../modals/ConfigModal/ConfigModal";
 import { SessionItem } from "../RigthSideBar/SessionItem";
@@ -17,29 +16,83 @@ interface MobileDrawerProps {
   onClose: () => void;
 }
 
-type TimerMode = "focus" | "short-break" | "long-break";
+interface PomodoroSession {
+  id: string;
+  type: "focus" | "short-break" | "long-break";
+  date: string;
+  time: string;
+  duration: number;
+}
+
+const sessionConfig = {
+  focus: {
+    title: "Focus Session",
+    icon: BrainIcon,
+    color: "text-gray-900",
+    iconBg: "bg-amber-50",
+  },
+  "short-break": {
+    title: "Short Break",
+    icon: CoffeeIcon,
+    color: "text-gray-900",
+    iconBg: "bg-green-50",
+  },
+  "long-break": {
+    title: "Long Break",
+    icon: Avocado,
+    color: "text-gray-900",
+    iconBg: "bg-blue-50",
+  },
+};
+
+const mockSessions: PomodoroSession[] = [
+  {
+    id: "1",
+    type: "focus",
+    date: "Today",
+    time: "10:30 AM",
+    duration: 25,
+  },
+  {
+    id: "2",
+    type: "short-break",
+    date: "Today",
+    time: "11:00 AM",
+    duration: 5,
+  },
+  {
+    id: "3",
+    type: "long-break",
+    date: "Today",
+    time: "11:05 AM",
+    duration: 15,
+  },
+  {
+    id: "4",
+    type: "focus",
+    date: "Yesterday",
+    time: "2:15 PM",
+    duration: 25,
+  },
+  {
+    id: "5",
+    type: "short-break",
+    date: "Yesterday",
+    time: "2:45 PM",
+    duration: 5,
+  },
+];
 
 const MobileDrawer = ({ isOpen, onClose }: MobileDrawerProps) => {
-  const { mode } = useTimer();
   const [showSettings, setShowSettings] = useState(false);
 
-  const menuItems = [
-    {
-      icon: BrainIcon,
-      label: "focus session",
-      mode: "focus" as TimerMode,
-    },
-    {
-      icon: CoffeeIcon,
-      label: "short break",
-      mode: "short-break" as TimerMode,
-    },
-    {
-      icon: Avocado,
-      label: "long break",
-      mode: "long-break" as TimerMode,
-    },
-  ];
+  const groupedSessions = mockSessions.reduce((acc, session) => {
+    if (!acc[session.date]) {
+      acc[session.date] = [];
+    }
+    acc[session.date]?.push(session);
+    return acc;
+  }, {} as Record<string, PomodoroSession[]>);
 
   return (
     <AnimatePresence>
@@ -51,7 +104,7 @@ const MobileDrawer = ({ isOpen, onClose }: MobileDrawerProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
+            className="fixed w-full min-h-screen inset-0 bg-black/40 backdrop-blur-sm z-50"
           />
 
           {/* Drawer */}
@@ -60,10 +113,10 @@ const MobileDrawer = ({ isOpen, onClose }: MobileDrawerProps) => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 20 }}
-            className="fixed right-0 top-0 h-full w-72 bg-white shadow-xl z-50"
+            className="fixed right-0 top-0 h-screen w-72 bg-white shadow-xl z-[999] flex flex-col overflow-y-auto"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b">
+            <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
               <h2 className="text-xl font-light text-text">menu</h2>
               <motion.button
                 whileTap={{ scale: 0.95 }}
@@ -74,46 +127,48 @@ const MobileDrawer = ({ isOpen, onClose }: MobileDrawerProps) => {
               </motion.button>
             </div>
 
-            <div className="w-full mt-4">
-              <PlayingTitle />
-            </div>
+            {/* Scrollable Content */}
+            <div className="flex-1">
+              <div className="w-full mt-4">
+                <PlayingTitle />
+              </div>
 
-            <div className="w-full mt-4">
-              <YoutubeVideo />
-            </div>
+              <div className="w-full mt-4">
+                <YoutubeVideo />
+              </div>
 
-            <div className="w-full mt-4">
-              <SideBarTitle title="recent Sessions" />
-              <Divider fullWidth />
-            </div>
+              {/* Recent Sessions Section */}
+              <div className="w-full mt-4 px-4">
+                <SideBarTitle
+                  title="recent sessions"
+                  tooltip="take a look at your work"
+                  className="w-full"
+                />
+                <Divider fullWidth />
 
-            {/* Menu Items */}
-            <div className="w-full">
-              {menuItems.map((item) => (
-                <motion.button
-                  key={item.label}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {}}
-                  className={`w-full flex items-center rounded-lg transition-colors ${
-                    item.mode === mode
-                      ? "bg-peach/10 text-text"
-                      : "hover:bg-gray-100 text-text"
-                  }`}
-                >
-                  <SessionItem
-                    type={
-                      item.label as
-                        | "focus session"
-                        | "short break"
-                        | "long break"
-                    }
-                    duration="25:00"
-                    date="2025-06-09"
-                    decorator={item.icon}
-                    className="w-full px-4"
-                  />
-                </motion.button>
-              ))}
+                {Object.entries(groupedSessions).map(([date, sessions]) => (
+                  <div key={date} className="space-y-2 px-2">
+                    <h2 className="text-sm font-light text-gray-700 px-2 mt-2">
+                      {date}
+                    </h2>
+                    {sessions.map((session) => {
+                      const config = sessionConfig[session.type];
+                      const IconComponent = config.icon;
+
+                      return (
+                        <SessionItem
+                          key={session.id}
+                          type={config.title}
+                          duration={session.duration.toString()}
+                          date={`${session.time}`}
+                          decorator={IconComponent}
+                          className={config.color}
+                        />
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
             </div>
           </motion.div>
 

@@ -4,12 +4,11 @@ import useWindowSize from "../../hooks/useWindowSize";
 
 const InsightsHome = () => {
   const { isMobile } = useWindowSize();
-
   return (
     <div
       className={`bg-white rounded-2xl shadow-md w-full ${
         isMobile ? "mt-6" : "mt-0"
-      } py-6 min-h-[100px]`}
+      } py-2 min-h-[100px]`}
     >
       <div className="flex flex-row items-start justify-start px-6">
         <ChartIcon className="w-6 h-6 text-brown" />

@@ -11,12 +11,16 @@ import { SettingsIcon } from "../../icons/SettingsIcon";
 import ConfigModal from "../modals/ConfigModal/ConfigModal";
 import { useState } from "react";
 import { MenuIcon } from "../../icons/MenuIcon";
+import { UserIcon } from "../../icons/UserIcon";
+import { useNavigate, useLocation } from "react-router-dom";
+import { HomeIcon } from "../../icons/HomeIcon";
 
 const StudifySidebar = () => {
   const { mode, setMode } = useTimer();
   const [settingsModal, setSettingsModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const navigate = useNavigate();
+  const location = useLocation();
   return (
     <>
       {/* Mobile Menu Button */}
@@ -35,10 +39,20 @@ const StudifySidebar = () => {
       >
         <div className="h-screen bg-white shadow-md flex flex-col w-52">
           <SideBarLogo />
-          <main className="mt-6 overflow-y-auto">
+          <main className="mt-4 overflow-y-auto">
             <section>
               <SideBarTitle title="timer" />
               <div className="flex flex-col">
+                {location.pathname !== "/" && (
+                  <SideBarItem
+                    decorator={HomeIcon}
+                    title="home"
+                    onSelect={() => {
+                      navigate("/");
+                      setIsMobileMenuOpen(false);
+                    }}
+                  />
+                )}
                 <SideBarItem
                   decorator={BrainIcon}
                   title="focus"
@@ -90,13 +104,21 @@ const StudifySidebar = () => {
               </div>
             </section>
             <section>
-              <SideBarTitle title="settings" />
+              <SideBarTitle title="account" />
               <div className="flex flex-col">
                 <SideBarItem
                   decorator={SettingsIcon}
                   title="settings"
                   onSelect={() => {
                     setSettingsModal(true);
+                    setIsMobileMenuOpen(false);
+                  }}
+                />
+                <SideBarItem
+                  decorator={UserIcon}
+                  title="profile"
+                  onSelect={() => {
+                    navigate("/profile");
                     setIsMobileMenuOpen(false);
                   }}
                 />

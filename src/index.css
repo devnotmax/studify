@@ -5,6 +5,8 @@
 
 body {
   @apply bg-background text-text font-helveticaNeue;
+  overflow-x: hidden;
+  min-height: 100vh;
 }
 
 /* thin */

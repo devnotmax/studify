@@ -8,9 +8,9 @@ const MobileSelectionMode = () => {
   const { mode, setMode } = useTimer();
   return (
     <>
-      <main className="mt-6 overflow-y-auto w-[50%]">
+      <main className="mt-6 w-full">
         <section>
-          <div className="flex flex-col">
+          <div className="flex flex-col overflow-y-auto w-full max-h-40 px-2">
             <SideBarItem
               decorator={BrainIcon}
               title="focus"

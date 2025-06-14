@@ -4,11 +4,16 @@ import { Tooltip } from "../ui/Tooltip";
 interface SideBarTitleProps {
   title: string;
   tooltip?: string;
+  className?: string;
 }
 
-export const SideBarTitle = ({ title, tooltip }: SideBarTitleProps) => {
+export const SideBarTitle = ({
+  title,
+  tooltip,
+  className,
+}: SideBarTitleProps) => {
   return (
-    <div className="flex items-center justify-between h-10 px-4">
+    <div className={`flex items-center justify-between h-10 px-4 ${className}`}>
       <p className="text-gray-500 text-sm">{title.toUpperCase()}</p>
       {tooltip && (
         <Tooltip label={tooltip} placement="top" delay={200}>
