@@ -1,4 +1,4 @@
-import { ConstructionIcon } from "../../icons/constructionIcon";
+import { ConstructionIcon } from "../../icons/ConstructionIcon";
 
 const ProfilePage = () => {
   return (
