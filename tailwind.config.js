@@ -12,6 +12,7 @@ module.exports = {
       },
       fontFamily: {
         helveticaNeue: ['"helveticaNeue"', "sans-serif"],
+        cabinetGrotesk: ['"CabinetGrotesk"', "sans-serif"],
       },
     },
   },

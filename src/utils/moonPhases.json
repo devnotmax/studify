@@ -1,0 +1,106 @@
+{
+  "new moon": {
+    "emotions": ["hopeful", "introspective", "calm"],
+    "phrases": [
+      "you are the seed. now plant your intention.",
+      "new beginnings need brave hearts — you've got one.",
+      "embrace the blank page. it's your time to rewrite your story."
+    ],
+    "rituals": [
+      "write down 3 intentions for this lunar cycle.",
+      "clean your space to invite fresh energy.",
+      "light a candle and visualize your future self."
+    ]
+  },
+  "waxing crescent": {
+    "emotions": ["motivated", "curious", "optimistic"],
+    "phrases": [
+      "your dreams are stretching their legs — keep feeding them.",
+      "tiny steps count. cosmic gps is recalculating for you.",
+      "progress > perfection. the moon agrees."
+    ],
+    "rituals": [
+      "create a vision board or mind map for your goals.",
+      "do a quick journaling session on what's energizing you.",
+      "say out loud one thing you're proud of today."
+    ]
+  },
+  "first quarter": {
+    "emotions": ["determined", "focused", "resistant to doubt"],
+    "phrases": [
+      "obstacles are just plot twists. you're the main character.",
+      "you've got this — and if not, pretend until you do.",
+      "action over analysis. just move, lunar queen!"
+    ],
+    "rituals": [
+      "write a short list of tasks that feel scary — do one.",
+      "take a walk with the intention of letting go of hesitation.",
+      "reaffirm your top priority aloud. feel it in your bones."
+    ]
+  },
+  "waxing gibbous": {
+    "emotions": ["refining", "energized", "thoughtful"],
+    "phrases": [
+      "you're almost there. trust the tweaks.",
+      "perfection is a myth. progress is your truth.",
+      "rest is part of the ritual — not a distraction."
+    ],
+    "rituals": [
+      "review your progress and adjust your plan.",
+      "add a self-care practice to your daily routine.",
+      "dance in your room. seriously. you're glowing."
+    ]
+  },
+  "full moon": {
+    "emotions": ["empowered", "emotional", "clear"],
+    "phrases": [
+      "shine like the weirdo goddess you are.",
+      "you are full — of light, of wisdom, of magic.",
+      "now is the time to release what dims your sparkle."
+    ],
+    "rituals": [
+      "write down what no longer serves you and burn it safely.",
+      "take a moon bath or walk under the moonlight.",
+      "celebrate your wins. you earned this light."
+    ]
+  },
+  "waning gibbous": {
+    "emotions": ["grateful", "reflective", "content"],
+    "phrases": [
+      "gratitude turns what you have into enough — and more.",
+      "reflect. refine. recharge.",
+      "your journey is holy. even the awkward parts."
+    ],
+    "rituals": [
+      "journal 5 things you're thankful for.",
+      "have a mindful cup of tea or mate.",
+      "give yourself permission to pause."
+    ]
+  },
+  "last quarter": {
+    "emotions": ["cleansing", "honest", "liberated"],
+    "phrases": [
+      "clear out what clutters your mind. lighten your magic.",
+      "declutter your life — and maybe your sock drawer too.",
+      "release the 'shoulds'. keep the soul stuff."
+    ],
+    "rituals": [
+      "organize your physical or digital space.",
+      "take a digital detox evening — phone off, soul on.",
+      "write one thing you need to let go of — then do it."
+    ]
+  },
+  "waning crescent": {
+    "emotions": ["restful", "dreamy", "surrendered"],
+    "phrases": [
+      "let the universe take the wheel. you nap.",
+      "rest isn't lazy. it's sacred maintenance.",
+      "the dream before the rebirth is holy. enjoy it."
+    ],
+    "rituals": [
+      "unplug and meditate or take a nap.",
+      "do nothing — on purpose.",
+      "prepare your energy for what's coming next."
+    ]
+  }
+}

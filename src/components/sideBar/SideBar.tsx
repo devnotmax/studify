@@ -14,13 +14,33 @@ import { MenuIcon } from "../../icons/MenuIcon";
 import { UserIcon } from "../../icons/UserIcon";
 import { useNavigate, useLocation } from "react-router-dom";
 import { HomeIcon } from "../../icons/HomeIcon";
+import { MoonIcon } from "../../icons/MoonIcon";
+import LoginCard from "../ui/LoginCard";
+import YoutubeSearchModal from "../RigthSideBar/YoutubeSearchModal";
 
 const StudifySidebar = () => {
   const { mode, setMode } = useTimer();
   const [settingsModal, setSettingsModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [collapsedSections, setCollapsedSections] = useState<
+    Record<string, boolean>
+  >({
+    timer: false,
+    media: false,
+    account: false,
+    nature: false,
+  });
   const navigate = useNavigate();
   const location = useLocation();
+  const [youtubeModalOpen, setYoutubeModalOpen] = useState(false);
+
+  const handleSectionToggle = (sectionName: string, collapsed: boolean) => {
+    setCollapsedSections((prev) => ({
+      ...prev,
+      [sectionName]: collapsed,
+    }));
+  };
+
   return (
     <>
       {/* Mobile Menu Button */}
@@ -37,94 +57,152 @@ const StudifySidebar = () => {
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 transition-transform duration-300 ease-in-out`}
       >
-        <div className="h-screen bg-white shadow-md flex flex-col w-52">
-          <SideBarLogo />
-          <main className="mt-4 overflow-y-auto">
-            <section>
-              <SideBarTitle title="timer" />
-              <div className="flex flex-col">
-                {location.pathname !== "/" && (
-                  <SideBarItem
-                    decorator={HomeIcon}
-                    title="home"
-                    onSelect={() => {
-                      navigate("/");
-                      setIsMobileMenuOpen(false);
-                    }}
-                  />
+        <div className="h-screen w-full bg-white shadow-md flex flex-col justify-between overflow-y-auto">
+          <div>
+            <SideBarLogo />
+            <main className="mt-4 overflow-y-auto">
+              <section>
+                <SideBarTitle
+                  title="timer"
+                  collapsible={true}
+                  defaultCollapsed={collapsedSections.timer}
+                  onToggle={(collapsed) =>
+                    handleSectionToggle("timer", collapsed)
+                  }
+                />
+                {!collapsedSections.timer && (
+                  <div className="flex flex-col">
+                    {location.pathname !== "/" && (
+                      <SideBarItem
+                        decorator={HomeIcon}
+                        title="home"
+                        onSelect={() => {
+                          navigate("/");
+                          setIsMobileMenuOpen(false);
+                        }}
+                      />
+                    )}
+                    {location.pathname === "/" && (
+                      <>
+                        <SideBarItem
+                          decorator={BrainIcon}
+                          title="focus"
+                          selected={mode === "focus"}
+                          onSelect={() => {
+                            setMode("focus");
+                            setIsMobileMenuOpen(false);
+                          }}
+                        />
+                        <SideBarItem
+                          decorator={CoffeeIcon}
+                          title="short break"
+                          selected={mode === "short-break"}
+                          onSelect={() => {
+                            setMode("short-break");
+                            setIsMobileMenuOpen(false);
+                          }}
+                        />
+                        <SideBarItem
+                          decorator={Avocado}
+                          title="long break"
+                          selected={mode === "long-break"}
+                          onSelect={() => {
+                            setMode("long-break");
+                            setIsMobileMenuOpen(false);
+                          }}
+                        />
+                      </>
+                    )}
+                  </div>
                 )}
-                <SideBarItem
-                  decorator={BrainIcon}
-                  title="focus"
-                  selected={mode === "focus"}
-                  onSelect={() => {
-                    setMode("focus");
-                    setIsMobileMenuOpen(false);
-                  }}
+              </section>
+              <section>
+                <SideBarTitle
+                  title="media"
+                  collapsible={true}
+                  defaultCollapsed={collapsedSections.media}
+                  onToggle={(collapsed) =>
+                    handleSectionToggle("media", collapsed)
+                  }
                 />
-                <SideBarItem
-                  decorator={CoffeeIcon}
-                  title="short break"
-                  selected={mode === "short-break"}
-                  onSelect={() => {
-                    setMode("short-break");
-                    setIsMobileMenuOpen(false);
-                  }}
+                {!collapsedSections.media && (
+                  <div className="flex flex-col">
+                    <SideBarItem
+                      decorator={MusicIcon}
+                      title="spotify"
+                      onSelect={() => {
+                        console.log("music");
+                        setIsMobileMenuOpen(false);
+                      }}
+                    />
+                    <SideBarItem
+                      decorator={YoutubeIcon}
+                      title="youtube"
+                      onSelect={() => {
+                        setYoutubeModalOpen(true);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    />
+                  </div>
+                )}
+              </section>
+              <section>
+                <SideBarTitle
+                  title="account"
+                  collapsible={true}
+                  defaultCollapsed={collapsedSections.account}
+                  onToggle={(collapsed) =>
+                    handleSectionToggle("account", collapsed)
+                  }
                 />
-                <SideBarItem
-                  decorator={Avocado}
-                  title="long break"
-                  selected={mode === "long-break"}
-                  onSelect={() => {
-                    setMode("long-break");
-                    setIsMobileMenuOpen(false);
-                  }}
+                {!collapsedSections.account && (
+                  <div className="flex flex-col">
+                    <SideBarItem
+                      decorator={SettingsIcon}
+                      title="settings"
+                      onSelect={() => {
+                        setSettingsModal(true);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    />
+                    <SideBarItem
+                      decorator={UserIcon}
+                      title="profile"
+                      selected={location.pathname === "/profile"}
+                      onSelect={() => {
+                        navigate("/profile");
+                        setIsMobileMenuOpen(false);
+                      }}
+                    />
+                  </div>
+                )}
+              </section>
+              <section>
+                <SideBarTitle
+                  title="NATURE"
+                  collapsible={true}
+                  defaultCollapsed={collapsedSections.nature}
+                  onToggle={(collapsed) =>
+                    handleSectionToggle("nature", collapsed)
+                  }
                 />
-              </div>
-            </section>
-            <section>
-              <SideBarTitle title="media" />
-              <div className="flex flex-col">
-                <SideBarItem
-                  decorator={MusicIcon}
-                  title="spotify"
-                  onSelect={() => {
-                    console.log("music");
-                    setIsMobileMenuOpen(false);
-                  }}
-                />
-                <SideBarItem
-                  decorator={YoutubeIcon}
-                  title="youtube"
-                  onSelect={() => {
-                    console.log("youtube");
-                    setIsMobileMenuOpen(false);
-                  }}
-                />
-              </div>
-            </section>
-            <section>
-              <SideBarTitle title="account" />
-              <div className="flex flex-col">
-                <SideBarItem
-                  decorator={SettingsIcon}
-                  title="settings"
-                  onSelect={() => {
-                    setSettingsModal(true);
-                    setIsMobileMenuOpen(false);
-                  }}
-                />
-                <SideBarItem
-                  decorator={UserIcon}
-                  title="profile"
-                  onSelect={() => {
-                    navigate("/profile");
-                    setIsMobileMenuOpen(false);
-                  }}
-                />
-              </div>
-            </section>
-          </main>
+                {!collapsedSections.nature && (
+                  <div className="flex flex-col">
+                    <SideBarItem
+                      decorator={MoonIcon}
+                      title="lunar cycle"
+                      selected={location.pathname === "/lunar-cycle"}
+                      onSelect={() => {
+                        navigate("/lunar-cycle");
+                        setIsMobileMenuOpen(false);
+                      }}
+                    />
+                  </div>
+                )}
+              </section>
+            </main>
+          </div>
+          <LoginCard />
         </div>
       </div>
 
@@ -140,6 +218,11 @@ const StudifySidebar = () => {
         isOpen={settingsModal}
         onClose={() => setSettingsModal(false)}
         width="50%"
+      />
+
+      <YoutubeSearchModal
+        isOpen={youtubeModalOpen}
+        onClose={() => setYoutubeModalOpen(false)}
       />
     </>
   );

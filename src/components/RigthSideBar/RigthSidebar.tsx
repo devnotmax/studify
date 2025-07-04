@@ -1,6 +1,28 @@
+import React, { useState } from "react";
 import { PlayingTitle } from "./PlayingTitle";
 import { RecentSessions } from "./RecentSessions";
 import { YoutubeVideo } from "./YoutubeVideo";
+import { SideBarTitle } from "../sideBar/SideBarTitle";
+
+type SectionKey = "playing" | "youtube" | "recent";
+
+// Títulos de las secciones
+const sections: {
+  key: SectionKey;
+  title: string;
+  component: React.ReactElement;
+}[] = [
+  {
+    key: "playing",
+    title: "Now Playing",
+    component: (
+      <>
+        <PlayingTitle /> <YoutubeVideo />{" "}
+      </>
+    ),
+  },
+  { key: "recent", title: "History", component: <RecentSessions /> },
+];
 
 type Props = {
   onClose?: () => void;
@@ -8,6 +30,17 @@ type Props = {
 };
 
 const StudifyEndSidebar = ({ onClose, className = "" }: Props) => {
+  // Estado de colapso por sección
+  const [collapsed, setCollapsed] = useState<Record<SectionKey, boolean>>({
+    playing: false,
+    youtube: false,
+    recent: false,
+  });
+
+  const handleToggle = (key: SectionKey, isCollapsed: boolean) => {
+    setCollapsed((prev) => ({ ...prev, [key]: isCollapsed }));
+  };
+
   return (
     <div
       className={`w-80 max-w-full bg-white shadow-md p-4 overflow-y-auto h-screen ${className}`}
@@ -21,9 +54,20 @@ const StudifyEndSidebar = ({ onClose, className = "" }: Props) => {
           ×
         </button>
       )}
-      <PlayingTitle />
-      <YoutubeVideo />
-      <RecentSessions />
+      {/* Secciones colapsables con SideBarTitle */}
+      {sections.map((section) => (
+        <div key={section.key}>
+          <SideBarTitle
+            title={section.title}
+            collapsible={true}
+            defaultCollapsed={collapsed[section.key]}
+            onToggle={(isCollapsed) => handleToggle(section.key, isCollapsed)}
+          />
+          {!collapsed[section.key] && (
+            <div className="mt-2">{section.component}</div>
+          )}
+        </div>
+      ))}
     </div>
   );
 };

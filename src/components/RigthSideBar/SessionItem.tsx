@@ -21,7 +21,7 @@ export const SessionItem = ({
           <div className="flex flex-row items-center gap-2 justify-between text-secondaryText">
             <p className="text-sm">{date}</p>
             <span className="text-gray-400">•</span>
-            <p className="text-sm">{`${duration} min`}</p>
+            <p className="text-sm">{duration}</p>
           </div>
         </div>
         <div className="flex items-center justify-center w-8 h-8 mr-2 bg-brown rounded-full">
