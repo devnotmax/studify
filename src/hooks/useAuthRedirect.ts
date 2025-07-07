@@ -1,20 +1,23 @@
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { sessionService } from '../services/sessionService';
 
-export const useAuthRedirect = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+export const useAuthRedirect = (redirectTo: string = '/auth/login') => {
   const { isAuthenticated, loading } = useAuth();
-
-  // Obtener la ruta de destino desde el estado de location
-  const from = location.state?.from?.pathname || '/';
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && isAuthenticated) {
-      navigate(from, { replace: true });
+    if (!loading && !isAuthenticated) {
+      // Limpiar datos de sesiones antes de redirigir
+      try {
+        sessionService.clearSessionData();
+      } catch (error) {
+        console.error('Error clearing session data on redirect:', error);
+      }
+      navigate(redirectTo);
     }
-  }, [isAuthenticated, loading, navigate, from]);
+  }, [isAuthenticated, loading, navigate, redirectTo]);
 
-  return { from };
+  return { isAuthenticated, loading };
 }; 

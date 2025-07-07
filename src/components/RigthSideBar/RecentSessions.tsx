@@ -6,6 +6,7 @@ import { BrainIcon } from "../../icons/BrainIcon";
 import { Avocado } from "../../icons/Avocado";
 import { CoffeeIcon } from "../../icons/CoffeeIcon";
 import { sessionService } from '../../services/sessionService';
+import { useAuth } from '../../context/AuthContext';
 import type { Session } from '../../types';
 
 const sessionConfig = {
@@ -63,12 +64,20 @@ const CheckIcon = () => (
 );
 
 export const RecentSessions = () => {
+  const { user, isAuthenticated } = useAuth();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSessions = async () => {
+      // Solo cargar sesiones si hay un usuario autenticado
+      if (!isAuthenticated || !user) {
+        setSessions([]);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
@@ -81,7 +90,7 @@ export const RecentSessions = () => {
       }
     };
     fetchSessions();
-  }, []);
+  }, [user, isAuthenticated]); // Agregar dependencias para recargar cuando cambie el usuario
 
   // Filtrar sesiones: no mostrar canceladas con completedTime = 0
   const filteredSessions = sessions.filter(

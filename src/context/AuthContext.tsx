@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import authService from '../services/authService';
+import { sessionService } from '../services/sessionService';
 import type { User, RegisterData, LoginData, ApiResponse, AuthResponse, AuthContextType } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,6 +22,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const savedUser = authService.getUser();
         if (savedUser && authService.isAuthenticated()) {
           setUser(savedUser);
+        } else {
+          // Si no hay usuario válido, limpiar datos de sesiones
+          try {
+            sessionService.clearSessionData();
+          } catch (error) {
+            console.error('Error clearing session data on init:', error);
+          }
         }
       } catch {
         console.error('Error al cargar datos de usuario');
@@ -33,11 +41,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initializeAuth();
   }, []);
 
+  // Efecto para limpiar datos cuando cambia el usuario
+  useEffect(() => {
+    if (user) {
+      console.log('👤 Usuario autenticado:', user.email);
+    } else {
+      console.log('👤 No hay usuario autenticado');
+    }
+  }, [user]);
+
   const login = async (credentials: LoginData): Promise<ApiResponse<AuthResponse>> => {
     setLoading(true);
     setError(null);
     
     try {
+      // Limpiar datos de sesiones del usuario anterior
+      try {
+        sessionService.clearSessionData();
+      } catch (error) {
+        console.error('Error clearing previous session data:', error);
+      }
+      
       const result = await authService.login(credentials);
       
       if (result.success && result.data) {
@@ -61,6 +85,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
     
     try {
+      // Limpiar datos de sesiones del usuario anterior
+      try {
+        sessionService.clearSessionData();
+      } catch (error) {
+        console.error('Error clearing previous session data:', error);
+      }
+      
       const result = await authService.register(userData);
       
       if (result.success && result.data) {
@@ -80,6 +111,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
+    // Limpiar datos de sesiones antes del logout
+    try {
+      sessionService.clearSessionData();
+    } catch (error) {
+      console.error('Error clearing session data:', error);
+    }
+    
     authService.logout();
     setUser(null);
     setError(null);

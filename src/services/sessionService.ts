@@ -108,6 +108,10 @@ export class SessionService {
   // Obtener historial de sesiones
   async getSessionHistory(page: number = 1, limit: number = 10): Promise<SessionHistory> {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No hay token de autenticación');
+      }
       const response = await api.get<SessionHistory>(`/sessions/history?page=${page}&limit=${limit}`);
       return response.data;
     } catch (error) {
@@ -119,6 +123,10 @@ export class SessionService {
   // Obtener información de racha
   async getStreakInfo(): Promise<{ streak: StreakInfo }> {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No hay token de autenticación');
+      }
       const response = await api.get<{ streak: StreakInfo }>('/sessions/streak');
       return response.data;
     } catch (error) {
@@ -226,6 +234,34 @@ export class SessionService {
     } catch (error) {
       console.error('Error getting session stats:', error);
       throw error;
+    }
+  }
+
+  // Limpiar todos los datos de sesiones locales
+  clearSessionData(): void {
+    console.log('🧹 Limpiando datos de sesiones locales...');
+    this.stopTimer();
+    this.currentSession = null;
+    this.onTick = null;
+    this.onComplete = null;
+    this.onPause = null;
+    this.onResume = null;
+  }
+
+  // Resetear completamente el servicio
+  reset(): void {
+    this.clearSessionData();
+    // Limpiar cualquier caché o datos persistentes
+    try {
+      // Limpiar datos específicos del navegador si existen
+      if (typeof window !== 'undefined') {
+        // Limpiar cualquier dato de sesión en sessionStorage
+        sessionStorage.removeItem('currentSession');
+        sessionStorage.removeItem('sessionTimer');
+        sessionStorage.removeItem('sessionProgress');
+      }
+    } catch (error) {
+      console.error('Error clearing session storage:', error);
     }
   }
 }

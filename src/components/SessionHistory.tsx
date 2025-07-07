@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { sessionService } from '../services/sessionService';
+import { useAuth } from '../context/AuthContext';
 import type { Session, SessionHistory as SessionHistoryType } from '../types';
 import TimerIcon from '../icons/TimerIcon';
 
@@ -8,6 +9,7 @@ interface SessionHistoryProps {
 }
 
 export const SessionHistory: React.FC<SessionHistoryProps> = ({ className = '' }) => {
+  const { user, isAuthenticated } = useAuth();
   const [history, setHistory] = useState<SessionHistoryType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,6 +17,12 @@ export const SessionHistory: React.FC<SessionHistoryProps> = ({ className = '' }
   const [limit] = useState(10);
 
   const loadHistory = async (page: number = 1) => {
+    if (!isAuthenticated || !user) {
+      setHistory(null);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -30,7 +38,7 @@ export const SessionHistory: React.FC<SessionHistoryProps> = ({ className = '' }
 
   useEffect(() => {
     loadHistory(currentPage);
-  }, [currentPage]);
+  }, [currentPage, user, isAuthenticated]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

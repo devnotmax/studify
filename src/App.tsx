@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TimerProvider } from "./context/TimerContext";
 import { AuthProvider } from "./context/AuthContext";
+import { SessionProvider } from "./context/SessionContext";
 import "./App.css";
 import Loader from "./components/Loader";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -25,29 +26,31 @@ function App() {
 
   return (
     <AuthProvider>
-      <TimerProvider>
-        <Routes>
-          {/* Rutas de autenticación */}
-          <Route path="/auth" element={<AuthLayout />}>
-            <Route path="login" element={<LoginPage />} />
-            <Route path="register" element={<RegisterPage />} />
-          </Route>
+      <SessionProvider>
+        <TimerProvider>
+          <Routes>
+            {/* Rutas de autenticación */}
+            <Route path="/auth" element={<AuthLayout />}>
+              <Route path="login" element={<LoginPage />} />
+              <Route path="register" element={<RegisterPage />} />
+            </Route>
 
-          {/* Rutas principales protegidas */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                {isMobile ? <MobileLayout /> : <DesktopLayout />}
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Home />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="lunar-cycle" element={<LunarCyclePage />} />
-          </Route>
-        </Routes>
-      </TimerProvider>
+            {/* Rutas principales protegidas */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  {isMobile ? <MobileLayout /> : <DesktopLayout />}
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Home />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="lunar-cycle" element={<LunarCyclePage />} />
+            </Route>
+          </Routes>
+        </TimerProvider>
+      </SessionProvider>
     </AuthProvider>
   );
 }

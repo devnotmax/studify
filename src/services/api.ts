@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_CONFIG, isDevelopment } from "../config/api";
+import { sessionService } from "./sessionService";
 
 // Crear instancia de axios con configuración CORS
 const api = axios.create({
@@ -62,6 +63,13 @@ api.interceptors.response.use(
     // Manejo específico de errores
     if (error.response?.status === 401) {
       console.log("🔒 Token expirado o inválido");
+
+      // Limpiar datos de sesiones locales
+      try {
+        sessionService.clearSessionData();
+      } catch (sessionError) {
+        console.error('Error clearing session data:', sessionError);
+      }
 
       // Solo redirigir si no estamos en una página de autenticación
       const currentPath = window.location.pathname;

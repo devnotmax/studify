@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { sessionService } from "../services/sessionService";
+import { useAuth } from "./AuthContext";
 import type { Session, SessionType, SessionResults } from "../types";
 import { SESSION_CONFIG } from "../types";
 import { toast } from "react-toastify";
@@ -26,6 +27,7 @@ interface SessionContextType {
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
   const [currentSession, setCurrentSession] = useState<Session | null>(null);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -33,6 +35,27 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [progress, setProgress] = useState(0);
   const [sessionResults, setSessionResults] = useState<SessionResults | null>(null);
   const [showResults, setShowResults] = useState(false);
+
+  // Limpiar estado cuando cambia el usuario
+  useEffect(() => {
+    if (!isAuthenticated || !user) {
+      // Limpiar todo el estado cuando no hay usuario autenticado
+      setCurrentSession(null);
+      setIsActive(false);
+      setIsPaused(false);
+      setTimeRemaining(0);
+      setProgress(0);
+      setSessionResults(null);
+      setShowResults(false);
+      
+      // Limpiar datos del servicio
+      try {
+        sessionService.clearSessionData();
+      } catch (error) {
+        console.error('Error clearing session data on user change:', error);
+      }
+    }
+  }, [user, isAuthenticated]);
 
   useEffect(() => {
     sessionService.setCallbacks({
@@ -78,6 +101,11 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   useEffect(() => {
     const checkActiveSession = async () => {
+      // Solo verificar sesión activa si hay un usuario autenticado
+      if (!isAuthenticated || !user) {
+        return;
+      }
+
       try {
         const activeSession = await sessionService.getActiveSession();
         if (activeSession) {
@@ -92,7 +120,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       }
     };
     checkActiveSession();
-  }, []);
+  }, [isAuthenticated, user]); // Agregar dependencias para que se ejecute cuando cambie el usuario
 
   const startSession = useCallback(async (sessionType: SessionType, duration: number) => {
     try {
