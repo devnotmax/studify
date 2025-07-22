@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import type { ReactNode } from "react";
 
 interface YoutubeVideoData {
   videoId: string;
@@ -14,9 +20,15 @@ interface YoutubePlayerContextType {
 
 const LOCALSTORAGE_KEY = "selectedYoutubeVideo";
 
-const YoutubePlayerContext = createContext<YoutubePlayerContextType | undefined>(undefined);
+const YoutubePlayerContext = createContext<
+  YoutubePlayerContextType | undefined
+>(undefined);
 
-export const YoutubePlayerProvider = ({ children }: { children: ReactNode }) => {
+export const YoutubePlayerProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const [video, setVideoState] = useState<YoutubeVideoData | null>(null);
 
   // Load from localStorage on mount
@@ -59,6 +71,9 @@ export const YoutubePlayerProvider = ({ children }: { children: ReactNode }) => 
 
 export const useYoutubePlayer = () => {
   const ctx = useContext(YoutubePlayerContext);
-  if (!ctx) throw new Error("useYoutubePlayer must be used within a YoutubePlayerProvider");
+  if (!ctx)
+    throw new Error(
+      "useYoutubePlayer must be used within a YoutubePlayerProvider"
+    );
   return ctx;
-}; 
+};
