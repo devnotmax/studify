@@ -15,11 +15,7 @@ const sections: {
   {
     key: "playing",
     title: "Now Playing",
-    component: (
-      <>
-        <PlayingTitle /> <YoutubeVideo />{" "}
-      </>
-    ),
+    component: <PlayingTitle />,
   },
   { key: "recent", title: "History", component: <RecentSessions /> },
 ];
@@ -65,6 +61,12 @@ const StudifyEndSidebar = ({ onClose, className = "" }: Props) => {
           />
           {!collapsed[section.key] && (
             <div className="mt-2">{section.component}</div>
+          )}
+          {/* Always mount YoutubeVideo, but only show it when Now Playing is expanded */}
+          {section.key === "playing" && (
+            <div className={collapsed.playing ? "hidden" : "mt-2"}>
+              <YoutubeVideo />
+            </div>
           )}
         </div>
       ))}

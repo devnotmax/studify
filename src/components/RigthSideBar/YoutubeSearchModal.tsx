@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 import BaseModal from "../modals/BaseModal/BaseModal";
-
-const LOCALSTORAGE_KEY = "selectedYoutubeVideo";
+import { useYoutubePlayer } from "../../context/YoutubePlayerContext";
 
 interface YoutubeSearchModalProps {
   isOpen: boolean;
@@ -23,6 +22,7 @@ export default function YoutubeSearchModal({ isOpen, onClose }: YoutubeSearchMod
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { setVideo } = useYoutubePlayer();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -73,14 +73,11 @@ export default function YoutubeSearchModal({ isOpen, onClose }: YoutubeSearchMod
   };
 
   const handleSelect = (video: YoutubeVideoItem) => {
-    localStorage.setItem(
-      LOCALSTORAGE_KEY,
-      JSON.stringify({
-        videoId: video.videoId,
-        title: video.title,
-        channelTitle: video.channelTitle,
-      })
-    );
+    setVideo({
+      videoId: video.videoId,
+      title: video.title,
+      channelTitle: video.channelTitle,
+    });
     onClose();
   };
 

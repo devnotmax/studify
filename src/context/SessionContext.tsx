@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { sessionService } from "../services/sessionService";
 import { useAuth } from "./AuthContext";
 import type { Session, SessionType, SessionResults } from "../types";
@@ -35,11 +35,13 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [progress, setProgress] = useState(0);
   const [sessionResults, setSessionResults] = useState<SessionResults | null>(null);
   const [showResults, setShowResults] = useState(false);
+  // Timer local para actualizar el tiempo restante sin consultar el backend cada segundo
+  const timerInterval = useRef<number | null>(null);
 
   // Limpiar estado cuando cambia el usuario
   useEffect(() => {
     if (!isAuthenticated || !user) {
-      // Limpiar todo el estado cuando no hay usuario autenticado
+      // Clear all state when there is no authenticated user
       setCurrentSession(null);
       setIsActive(false);
       setIsPaused(false);
@@ -74,7 +76,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (currentSession) {
           try {
             await endSession();
-            toast.success("¡Sesión completada!");
+            toast.success("Session completed!");
             try {
               const audio = new Audio(notification);
               audio.play();
@@ -122,6 +124,63 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     checkActiveSession();
   }, [isAuthenticated, user]); // Agregar dependencias para que se ejecute cuando cambie el usuario
 
+  // Calcular tiempo transcurrido y restante según la nueva especificación del backend
+  const calculateTimes = () => {
+    if (!currentSession) return { elapsed: 0, remaining: 0 };
+    const { duration, completedTime, startTime, isPaused } = currentSession;
+    let elapsed = completedTime || 0;
+    if (!isPaused) {
+      const now = Date.now();
+      const start = new Date(startTime).getTime();
+      elapsed += Math.floor((now - start) / 1000);
+    }
+    const remaining = Math.max(0, duration - elapsed);
+    return { elapsed, remaining };
+  };
+
+  // Actualizar el timer localmente
+  useEffect(() => {
+    if (!currentSession) {
+      if (timerInterval.current) {
+        clearInterval(timerInterval.current);
+        timerInterval.current = null;
+      }
+      setTimeRemaining(0);
+      setProgress(0);
+      return;
+    }
+    if (currentSession.isPaused) {
+      if (timerInterval.current) {
+        clearInterval(timerInterval.current);
+        timerInterval.current = null;
+      }
+      const { remaining } = calculateTimes();
+      setTimeRemaining(remaining);
+      setProgress(((currentSession.duration - remaining) / currentSession.duration) * 100);
+      return;
+    }
+    // Si está activa, actualizar cada segundo localmente
+    timerInterval.current = window.setInterval(() => {
+      const { remaining } = calculateTimes();
+      setTimeRemaining(remaining);
+      setProgress(((currentSession.duration - remaining) / currentSession.duration) * 100);
+      if (remaining <= 0) {
+        clearInterval(timerInterval.current!);
+        timerInterval.current = null;
+        setIsActive(false);
+        setIsPaused(false);
+        setProgress(100);
+        endSession();
+      }
+    }, 1000);
+    return () => {
+      if (timerInterval.current) {
+        clearInterval(timerInterval.current);
+        timerInterval.current = null;
+      }
+    };
+  }, [currentSession]);
+
   const startSession = useCallback(async (sessionType: SessionType, duration: number) => {
     try {
       const session = await sessionService.startSession(sessionType, duration);
@@ -136,23 +195,45 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, []);
 
-  const pauseSession = useCallback(() => {
-    sessionService.pauseSession();
-  }, []);
+  // Al pausar, sincronizar con backend y detener timer local
+  const pauseSession = useCallback(async () => {
+    if (!currentSession) return;
+    try {
+      const { session } = await sessionService.pauseSessionApi(currentSession.id);
+      setCurrentSession(session);
+      setIsPaused(true);
+      setIsActive(false);
+    } catch (error) {
+      console.error('Error pausing session:', error);
+    }
+  }, [currentSession]);
 
-  const resumeSession = useCallback(() => {
-    sessionService.resumeSession();
-  }, []);
+  // Al reanudar, sincronizar con backend y reiniciar timer local
+  const resumeSession = useCallback(async () => {
+    if (!currentSession) return;
+    try {
+      const { session } = await sessionService.resumeSessionApi(currentSession.id);
+      setCurrentSession(session);
+      setIsPaused(false);
+      setIsActive(true);
+    } catch (error) {
+      console.error('Error resuming session:', error);
+    }
+  }, [currentSession]);
 
+  // Al finalizar, consultar el backend para validar el tiempo restante
   const endSession = useCallback(async () => {
     if (!currentSession) return;
     try {
-      // Calcular el tiempo completado basado en el tiempo transcurrido real
+      const remaining = await sessionService.getRemainingTimeApi(currentSession.id);
+      if (remaining > 0) {
+        toast.error("Cannot end the session, there is still time left");
+        return;
+      }
       const startTime = new Date(currentSession.startTime);
       const now = new Date();
       const elapsedSeconds = Math.floor((now.getTime() - startTime.getTime()) / 1000);
       const completedTime = Math.min(elapsedSeconds, currentSession.duration);
-      
       const results = await sessionService.endSession(currentSession.id, completedTime);
       setCurrentSession(null);
       setIsActive(false);
@@ -164,17 +245,24 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       return results;
     } catch (error: unknown) {
       console.error('Error ending session:', error);
-      
-      // Manejar errores específicos del backend
-      const axiosError = error as { response?: { data?: { error?: { message?: string } }, status?: number } };
-      if (axiosError.response?.data?.error?.message === "User stats not found") {
-        toast.error("Error: Estadísticas de usuario no encontradas. Contacta al administrador.");
+      const axiosError = error as { response?: { data?: unknown, status?: number } };
+      const data = axiosError.response?.data;
+      const errorMessage = typeof data === 'object' && data !== null && 'message' in data ? (data as { message?: string }).message : undefined;
+      if (
+        typeof data === 'object' &&
+        data !== null &&
+        'error' in data &&
+        typeof (data as { error?: { message?: string } }).error === 'object' &&
+        (data as { error?: { message?: string } }).error?.message === "User stats not found"
+      ) {
+        toast.error("Error: User stats not found. Contact the administrator.");
       } else if (axiosError.response?.status === 500) {
-        toast.error("Error del servidor al finalizar la sesión");
+        toast.error("Server error when ending the session");
+      } else if (errorMessage) {
+        toast.error(errorMessage);
       } else {
-        toast.error("Error al finalizar la sesión");
+        toast.error("Error ending session");
       }
-      
       throw error;
     }
   }, [currentSession]);

@@ -38,6 +38,54 @@ export const SessionTimer: React.FC = () => {
   // Estado para modal de cancelar
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
 
+  // Calcular tiempo transcurrido y restante según el estado de la sesión
+  const getElapsedAndRemaining = () => {
+    if (!currentSession) return { elapsed: 0, remaining: 0 };
+    const { duration, startTime, isPaused } = currentSession;
+    const elapsedBeforePause =
+      typeof (currentSession as unknown as Record<string, unknown>)
+        .elapsedBeforePause === "number"
+        ? (currentSession as unknown as { elapsedBeforePause: number })
+            .elapsedBeforePause
+        : 0;
+    let elapsed = elapsedBeforePause;
+    if (!isPaused) {
+      const now = Date.now();
+      const start = new Date(startTime).getTime();
+      elapsed += Math.floor((now - start) / 1000);
+    }
+    const remaining = Math.max(0, duration - elapsed);
+    return { elapsed, remaining };
+  };
+
+  // Estado local para el cronómetro visual
+  const [localRemaining, setLocalRemaining] = useState(0);
+
+  // Actualizar el cronómetro visualmente según el estado de la sesión
+  useEffect(() => {
+    if (!currentSession) {
+      // Mostrar el tiempo programado según el modo actual
+      let programmed = 0;
+      if (mode === "focus") programmed = settings.focus * 60;
+      else if (mode === "short-break") programmed = settings.shortBreak * 60;
+      else if (mode === "long-break") programmed = settings.longBreak * 60;
+      setLocalRemaining(programmed);
+      return;
+    }
+    const update = () => {
+      const { remaining } = getElapsedAndRemaining();
+      setLocalRemaining(remaining);
+    };
+    update();
+    if (currentSession.isPaused) {
+      // Si está pausada, solo actualiza una vez
+      return;
+    }
+    // Si está activa, actualizar cada segundo
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [currentSession]);
+
   // Efecto para decrementar el tiempo
   useEffect(() => {
     let intervalId: number;
@@ -58,7 +106,7 @@ export const SessionTimer: React.FC = () => {
     try {
       let duration = 0;
       let sessionType: SessionType = "focus";
-      
+
       if (mode === "focus") {
         duration = settings.focus * 60;
         sessionType = "focus";
@@ -69,7 +117,7 @@ export const SessionTimer: React.FC = () => {
         duration = settings.longBreak * 60;
         sessionType = "long_break";
       }
-      
+
       await startSession(sessionType, duration);
       setIsRunning(true);
     } catch (error) {
@@ -130,8 +178,8 @@ export const SessionTimer: React.FC = () => {
 
   // Formatear tiempo
   const formatTime = (num: number) => num.toString().padStart(2, "0");
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+  const minutes = Math.floor(localRemaining / 60);
+  const seconds = localRemaining % 60;
 
   return (
     <div className="min-h-[20vh] flex flex-col items-center justify-center bg-transparent rounded-xl shadow-none p-0">
@@ -182,7 +230,7 @@ export const SessionTimer: React.FC = () => {
           <button
             onClick={handlePauseResume}
             className="w-11 h-11 rounded-full bg-[#f7e7e1] flex items-center justify-center shadow hover:bg-[#f3d6c7] transition-colors"
-            aria-label={isRunning ? "Pausar" : "Reanudar"}
+            aria-label={isRunning ? "pause" : "resume"}
           >
             {isRunning ? (
               <PauseIcon className="w-6 h-6 text-[#3a5156]" />
@@ -194,7 +242,7 @@ export const SessionTimer: React.FC = () => {
           <button
             onClick={handleStartSession}
             className="w-11 h-11 rounded-full bg-[#f7e7e1] flex items-center justify-center shadow hover:bg-[#f3d6c7] transition-colors"
-            aria-label="Iniciar sesión"
+            aria-label="sign in"
           >
             <PlayIcon className="w-6 h-6 text-[#3a5156]" />
           </button>
@@ -204,7 +252,7 @@ export const SessionTimer: React.FC = () => {
           <button
             onClick={handleEndSession}
             className="w-11 h-11 rounded-full bg-[#f7e7e1] flex items-center justify-center shadow hover:bg-[#f3d6c7] transition-colors"
-            aria-label="Completar sesión"
+            aria-label="complete session"
           >
             <ResetIcon className="w-6 h-6 text-[#3a5156]" />
           </button>
@@ -214,7 +262,7 @@ export const SessionTimer: React.FC = () => {
           <button
             onClick={() => setShowConfirmCancel(true)}
             className="w-11 h-11 rounded-full bg-[#f7e7e1] flex items-center justify-center shadow hover:bg-[#f3d6c7] transition-colors"
-            aria-label="Cancelar sesión"
+            aria-label="cancel session"
           >
             <XIcon className="w-6 h-6 text-[#3a5156]" />
           </button>
@@ -226,23 +274,24 @@ export const SessionTimer: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              ¿Cancelar sesión?
+              cancel session?
             </h3>
             <p className="text-gray-600 mb-6">
-              ¿Estás seguro de que quieres cancelar esta sesión? El progreso se perderá.
+              are you sure you want to cancel this session? your progress will
+              be lost.
             </p>
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowConfirmCancel(false)}
                 className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                Cancelar
+                cancel
               </button>
               <button
                 onClick={handleCancelSession}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               >
-                Sí, cancelar
+                confirm
               </button>
             </div>
           </div>

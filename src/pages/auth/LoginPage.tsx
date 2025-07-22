@@ -72,7 +72,7 @@ const LoginPage = () => {
         <FormInput
           id="email"
           type="email"
-          label="Email o nombre de usuario"
+          label="Email or username"
           placeholder="johnDoe@email.com"
           value={formData.email}
           onChange={(value) => handleInputChange("email", value)}
@@ -82,7 +82,7 @@ const LoginPage = () => {
         <FormInput
           id="password"
           type="password"
-          label="Contraseña"
+          label="Password"
           placeholder="••••••••"
           value={formData.password}
           onChange={(value) => handleInputChange("password", value)}
@@ -96,7 +96,7 @@ const LoginPage = () => {
               className="h-4 w-4 bg-transparent text-green-600 focus:ring-green-500 border-secondaryText rounded"
             />
             <span className="ml-2 text-sm text-secondaryText">
-              Mantener sesión iniciada
+              Keep me signed in
             </span>
           </label>
         </div>
@@ -107,7 +107,7 @@ const LoginPage = () => {
           className="w-full bg-greenPastel text-white py-3 px-4 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="text-sm font-medium text-text uppercase tracking-widest transition-all duration-200 hover:text-primaryDark">
-            {loading ? "Iniciando sesión..." : "Iniciar sesión ahora"}
+            {loading ? "Signing in..." : "Sign in now"}
           </span>
         </button>
         <div className="flex items-center justify-between">
@@ -115,13 +115,13 @@ const LoginPage = () => {
             to="/auth/register"
             className="text-sm underline text-primaryDark hover:text-text font-medium"
           >
-            ¿No eres miembro? Regístrate ahora
+            Not a member? Register now
           </Link>
           <Link
             to="/auth/forgot-password"
             className="text-sm underline text-primaryDark hover:text-text font-medium"
           >
-            ¿Olvidaste tu contraseña?
+            Forgot your password?
           </Link>
         </div>
       </form>
@@ -129,7 +129,7 @@ const LoginPage = () => {
       {/* Divider */}
       <div className="my-4 flex items-center">
         <div className="flex-1 border-t border-gray-300"></div>
-        <span className="px-4 text-base text-gray-500">o inicia sesión con</span>
+        <span className="px-4 text-base text-gray-500">or sign in with</span>
         <div className="flex-1 border-t border-gray-300"></div>
       </div>
 

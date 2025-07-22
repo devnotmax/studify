@@ -71,20 +71,20 @@ export const SessionResults: React.FC<SessionResultsProps> = ({
         <div className="text-center mb-6">
           <div className="text-6xl mb-4">🎉</div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            ¡Sesión Completada!
+            Session Completed!
           </h2>
           <p className="text-gray-600">
             {getSessionTypeLabel(results.session.sessionType)}
           </p>
         </div>
 
-        {/* Detalles de la sesión */}
+        {/* Session details */}
         <div className="space-y-4 mb-6">
           <div className="bg-blue-50 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <TimerIcon className="w-5 h-5 mr-2 text-blue-600" />
-                <span className="text-sm text-gray-600">Tiempo completado</span>
+                <span className="text-sm text-gray-600">Completed time</span>
               </div>
               <span className="text-lg font-bold text-blue-600">
                 {formatDuration(results.session.completedTime)}
@@ -92,12 +92,12 @@ export const SessionResults: React.FC<SessionResultsProps> = ({
             </div>
           </div>
 
-          {/* Información de racha */}
+          {/* Streak information */}
           <div className="bg-green-50 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
                 <RibbonIcon className="w-5 h-5 mr-2 text-green-600" />
-                <span className="text-sm text-gray-600">Tu racha actual</span>
+                <span className="text-sm text-gray-600">Your current streak</span>
               </div>
               <span className="text-2xl">{getStreakEmoji(results.streak.currentStreak)}</span>
             </div>
@@ -105,18 +105,18 @@ export const SessionResults: React.FC<SessionResultsProps> = ({
               <div className="text-2xl font-bold text-green-600">
                 {results.streak.currentStreak}
               </div>
-              <div className="text-sm text-gray-600">días consecutivos</div>
+              <div className="text-sm text-gray-600">consecutive days</div>
             </div>
           </div>
 
-          {/* Racha más larga */}
+          {/* Longest streak */}
           {results.streak.longestStreak > results.streak.currentStreak && (
             <div className="bg-purple-50 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-gray-600">Racha más larga</div>
+                  <div className="text-sm text-gray-600">Longest streak</div>
                   <div className="text-lg font-bold text-purple-600">
-                    {results.streak.longestStreak} días
+                    {results.streak.longestStreak} days
                   </div>
                 </div>
                 <span className="text-2xl">🏆</span>
@@ -124,31 +124,31 @@ export const SessionResults: React.FC<SessionResultsProps> = ({
             </div>
           )}
 
-          {/* Nuevos logros */}
+          {/* New achievements */}
           {results.newAchievements && results.newAchievements.length > 0 && 
             getAchievementMessage(results.newAchievements)
           }
         </div>
 
-        {/* Mensaje motivacional */}
+        {/* Motivational message */}
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 mb-6">
           <div className="text-sm text-gray-700">
-            <div className="font-medium mb-1">💪 ¡Excelente trabajo!</div>
+            <div className="font-medium mb-1">💪 Great job!</div>
             {results.streak.currentStreak === 1 && 
-              "¡Has comenzado tu racha de estudio! Mantén la consistencia."}
+              "You've started your study streak! Keep up the consistency."}
             {results.streak.currentStreak > 1 && results.streak.currentStreak < 7 && 
-              "¡Sigues construyendo una base sólida! Cada sesión cuenta."}
+              "You're building a solid foundation! Every session counts."}
             {results.streak.currentStreak >= 7 && 
-              "¡Eres un ejemplo de dedicación! Tu disciplina es admirable."}
+              "You're an example of dedication! Your discipline is admirable."}
           </div>
         </div>
 
-        {/* Botón de cerrar */}
+        {/* Close button */}
         <button
           onClick={onClose}
           className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
         >
-          Continuar
+          Continue
         </button>
       </div>
     </div>

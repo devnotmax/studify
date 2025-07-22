@@ -6,12 +6,15 @@ import "./index.css";
 import App from "./App.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { YoutubePlayerProvider } from "./context/YoutubePlayerContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
-      <ToastContainer position="bottom-right" />
+      <YoutubePlayerProvider>
+        <App />
+        <ToastContainer position="bottom-right" />
+      </YoutubePlayerProvider>
     </BrowserRouter>
   </StrictMode>
 );

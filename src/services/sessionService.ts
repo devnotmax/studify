@@ -264,6 +264,39 @@ export class SessionService {
       console.error('Error clearing session storage:', error);
     }
   }
+
+  // Pausar sesión
+  async pauseSessionApi(sessionId: string): Promise<{ message: string; session: Session }> {
+    try {
+      const response = await api.put(`/sessions/${sessionId}/pause`);
+      return response.data;
+    } catch (error) {
+      console.error('Error pausing session:', error);
+      throw error;
+    }
+  }
+
+  // Reanudar sesión
+  async resumeSessionApi(sessionId: string): Promise<{ message: string; session: Session }> {
+    try {
+      const response = await api.put(`/sessions/${sessionId}/resume`);
+      return response.data;
+    } catch (error) {
+      console.error('Error resuming session:', error);
+      throw error;
+    }
+  }
+
+  // Consultar tiempo restante real
+  async getRemainingTimeApi(sessionId: string): Promise<number> {
+    try {
+      const response = await api.get<{ remaining: number }>(`/sessions/${sessionId}/remaining`);
+      return response.data.remaining;
+    } catch (error) {
+      console.error('Error getting remaining time:', error);
+      throw error;
+    }
+  }
 }
 
 // Exportar instancia singleton
